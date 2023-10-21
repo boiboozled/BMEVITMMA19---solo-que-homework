@@ -20,8 +20,8 @@ This script downloads the [facebook dataset](https://snap.stanford.edu/data/ego-
 This script loads the data of one ego-network from the facebook dataset, creates a dgl graph from the data, then splits that graph into two train, validation, and test graphs. One with positive edges and one with negative ones for all three. Finally, it saves the whole graph, and it's splits. For now, the ego-network id, and the load and save paths are not given as arguments, but given in the script. This will change in the future to make containerization easier.
 
 ## Related works
-[Node2Vec](https://arxiv.org/abs/1607.00653)
-[Friend Recommendation using GraphSAGE](https://medium.com/stanford-cs224w/friend-recommendation-using-graphsage-ffcda2aaf8d6)
+- [Node2Vec](https://arxiv.org/abs/1607.00653)
+- [Friend Recommendation using GraphSAGE](https://medium.com/stanford-cs224w/friend-recommendation-using-graphsage-ffcda2aaf8d6)
 
 
 ## Usage
