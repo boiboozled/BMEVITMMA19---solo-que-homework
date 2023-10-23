@@ -6,7 +6,7 @@ This is the repository of the homework of team solo que for the BMEVITMMA19 cour
 solo que
 
 ## Group members
-Mihályi Balázs Márk - J8KAR3
+Mihályi Balázs Márk - [REDACTED]
 
 ## Project describtion
 Friend recommendation with graph neural networks
