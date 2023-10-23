@@ -25,4 +25,4 @@ This script loads the data of one ego-network from the facebook dataset, creates
 
 
 ## Usage
-To get the train, validation, and test graph sets, you just need to run the two scripts in order. First _data_acq.py_, _then data_prep.py_.
+To get the train, validation, and test graph sets, you just need to run the two scripts in order. First _data_acq.py_, then _data_prep.py_.
