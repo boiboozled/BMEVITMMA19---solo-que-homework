@@ -40,17 +40,23 @@ def load_data(data_path, user_id):
     print(f'Loaded data int DGL graph: {g.number_of_nodes()} nodes, {g.number_of_edges()} edges.')
     return g
 
-def split_data(g,test_size=0.3):
+def split_data(g,test_size=0.2, val_size=0.1):
     u, v = g.edges()
 
     eids = np.arange(g.number_of_edges())
     eids = np.random.permutation(eids)
     test_size = int(len(eids) * test_size)  # number of edges in test set
-    train_size = g.number_of_edges() - test_size  # number of edges in train set
+    val_size = int(len(eids) * val_size)  # number of edges in validation set
+    train_size = g.number_of_edges() - test_size - val_size  # number of edges in train set
 
     # get positive edges for test and train
     test_pos_u, test_pos_v = u[eids[:test_size]], v[eids[:test_size]]
     train_pos_u, train_pos_v = u[eids[test_size:]], v[eids[test_size:]]
+
+    # get positive edges for validation and train
+    val_pos_u, val_pos_v = train_pos_u[eids[:val_size]], train_pos_v[eids[:+ val_size]]
+    train_pos_u, train_pos_v = train_pos_u[eids[val_size:]], train_pos_v[eids[val_size:]]
+
 
     # Find all negative edges
     adj = sp.coo_matrix((np.ones(len(u)), (u.numpy(), v.numpy())))
@@ -62,9 +68,16 @@ def split_data(g,test_size=0.3):
     test_neg_u, test_neg_v = neg_u[neg_eids[:test_size]], neg_v[neg_eids[:test_size]]
     train_neg_u, train_neg_v = neg_u[neg_eids[test_size:]], neg_v[neg_eids[test_size:]]
 
+    # split the negative edges for validation and training
+    val_neg_u, val_neg_v = train_neg_u[neg_eids[:val_size]], train_neg_v[neg_eids[:val_size]]
+    train_neg_u, train_neg_v = train_neg_u[neg_eids[val_size:]], train_neg_v[neg_eids[val_size:]]
+
     # construct positive and negative graphs for training and testing
     train_pos_g = dgl.graph((train_pos_u, train_pos_v), num_nodes=g.number_of_nodes())
     train_neg_g = dgl.graph((train_neg_u, train_neg_v), num_nodes=g.number_of_nodes())
+
+    val_pos_g = dgl.graph((val_pos_u, val_pos_v), num_nodes=g.number_of_nodes())
+    val_neg_g = dgl.graph((val_neg_u, val_neg_v), num_nodes=g.number_of_nodes())
 
     test_pos_g = dgl.graph((test_pos_u, test_pos_v), num_nodes=g.number_of_nodes())
     test_neg_g = dgl.graph((test_neg_u, test_neg_v), num_nodes=g.number_of_nodes())
@@ -73,13 +86,13 @@ def split_data(g,test_size=0.3):
     train_g = dgl.remove_edges(g, eids[:test_size])
     train_g = dgl.add_self_loop(train_g)
 
-    return train_g, train_pos_g, train_neg_g, test_pos_g, test_neg_g
+    return train_g, train_pos_g, train_neg_g, val_pos_g, val_neg_g ,test_pos_g, test_neg_g
 
 
 # load data
 g = load_data(data_path, USER)
 # split data
-train_g, train_pos_g, train_neg_g, test_pos_g, test_neg_g = split_data(g)
+train_g, train_pos_g, train_neg_g,val_pos_g,val_neg_g,test_pos_g, test_neg_g = split_data(g)
 
 # save graphs
-save_graphs(save_path_graphs, [train_g, train_pos_g, train_neg_g, test_pos_g, test_neg_g])
+save_graphs(save_path_graphs, [train_g, train_pos_g,train_neg_g,val_pos_g,val_neg_g ,test_pos_g, test_neg_g])
