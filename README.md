@@ -14,15 +14,19 @@ The goal of this project is to develop a personalized friend recommendation syst
 
 ## Table of contects
 ### data_acq.py
-This script downloads the [facebook dataset](https://snap.stanford.edu/data/ego-Facebook.html) into the data folder, then unzips it there. Later versions will take an argument, that will decide which social dataset to download. Other options will be the [twitter dataset](), and the [Google+]() dataset.
+This script downloads the [facebook dataset](https://snap.stanford.edu/data/ego-Facebook.html) into the data folder, then unzips it there.
 
 ### data_prep.py
-This script loads the data of one ego-network from the facebook dataset, creates a dgl graph from the data, then splits that graph into two train, validation, and test graphs. One with positive edges and one with negative ones for all three. Finally, it saves the whole graph, and it's splits. For now, the ego-network id, and the load and save paths are not given as arguments, but given in the script. This will change in the future to make containerization easier.
+This script loads the data of all of the ego-networks from the facebook dataset, creates a networkx graph from the data, then creates training, validation, and test splits with negative edge sampling. It then saves the train networkx graph, and the numpy arrays of training, validation and test edges (positive and negative).
 
 ## Related works
 - [Node2Vec](https://arxiv.org/abs/1607.00653)
 - [Friend Recommendation using GraphSAGE](https://medium.com/stanford-cs224w/friend-recommendation-using-graphsage-ffcda2aaf8d6)
+- [GitHub Repository on link prediciton](https://github.com/lucashu1/link-prediction)
+- [GitHub Repository on Graph Auto Encoders](https://github.com/tkipf/gae/tree/master)
 
 
 ## Usage
-To get the train, validation, and test graph sets, you just need to run the two scripts in order. First _data_acq.py_, then _data_prep.py_.
+To get the train, validation, and test splits, just run these two scripts in order: 
+- _data_acq.py_,
+- _data_prep.py_.
