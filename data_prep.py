@@ -43,6 +43,9 @@ def load_data(data_path, user_id):
 
     assert nx.is_connected(g), 'Graph is not connected'
     print(f'Loaded data from {data_path}: {g.number_of_nodes()} nodes, {g.number_of_edges()} edges.')
+    # Save graph as pickle file
+    with open('./data/facebook-processed/{}.p'.format(user_id), 'wb') as f:
+        pickle.dump(g, f)
 
     return g
 
@@ -239,6 +242,8 @@ def load_user_data(user_id, load_path_graphs):
     print(f'Graph {user_id} loaded')
     return g_user_train, train_edges, train_edges_false, val_edges, val_edges_false, test_edges, test_edges_false
 
-
-for user in FB_EGO_USERS:
-    save_ego_user_data(user, data_path, save_path_graphs)
+# only run if main
+if __name__ == "__main__":
+    # save data for all users
+    for user in FB_EGO_USERS:
+        save_ego_user_data(user, data_path, save_path_graphs)
