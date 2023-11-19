@@ -19,6 +19,13 @@ This script downloads the [facebook dataset](https://snap.stanford.edu/data/ego-
 ### data_prep.py
 This script loads the data of all of the ego-networks from the facebook dataset, creates a networkx graph from the data, then creates training, validation, and test splits with negative edge sampling. It then saves the train networkx graph, and the numpy arrays of training, validation and test edges (positive and negative).
 
+### run_baselines.py
+This script loads one ego-network, and it's train, validation, and test sets. It then runs three baseline approaches, and prints their ROC and AP scores on the console as well as their confusion matrices.
+The baseline models are:
+- Node2Vec (with Logistic Regression)
+- Spectral Clustering
+- GNN (simple GCN) - yet to be added
+
 ## Related works
 - [Node2Vec](https://arxiv.org/abs/1607.00653)
 - [Friend Recommendation using GraphSAGE](https://medium.com/stanford-cs224w/friend-recommendation-using-graphsage-ffcda2aaf8d6)
@@ -30,3 +37,4 @@ This script loads the data of all of the ego-networks from the facebook dataset,
 To get the train, validation, and test splits, just run these two scripts in order: 
 - _data_acq.py_,
 - _data_prep.py_.
+To run baseline models, simply run the _run_baselines.py_ script.
