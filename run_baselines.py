@@ -2,7 +2,8 @@ from data_prep import load_user_data
 import networkx as nx
 import numpy as np
 import pickle
-from sklearn.metrics import roc_auc_score,average_precision_score
+from sklearn.metrics import roc_auc_score,average_precision_score,confusion_matrix
+
 
 # load data
 user_id = 0
@@ -113,10 +114,15 @@ test_preds_n2v = edge_classifier.predict_proba(test_edge_embs)[:, 1]
 test_roc_n2v = roc_auc_score(test_edge_labels, test_preds_n2v)
 test_ap_n2v = average_precision_score(test_edge_labels, test_preds_n2v)
 
+# Create confusion matrix
+conf_mtx_n2v = confusion_matrix(test_edge_labels, edge_classifier.predict(test_edge_embs))
+
+
 print('node2vec Validation ROC score: ', str(val_roc_n2v))
 print('node2vec Validation AP score: ', str(val_ap_n2v))
 print('node2vec Test ROC score: ', str(test_roc_n2v))
 print('node2vec Test AP score: ', str(test_ap_n2v))
+print('node2vec Confusion matrix (test): \n', str(conf_mtx_n2v))
 
 # RUN SPECTRAL CLUSTERING
 from sklearn.manifold import spectral_embedding
@@ -148,14 +154,20 @@ def get_roc_score(edges_pos, edges_neg, embeddings):
     labels_all = np.hstack([np.ones(len(preds_pos)), np.zeros(len(preds_neg))])
     roc_score = roc_auc_score(labels_all, preds_all)
     ap_score = average_precision_score(labels_all, preds_all)
-    return roc_score, ap_score
+
+    # create confusion matrix
+    conf_mtx = confusion_matrix(labels_all, np.round(preds_all))
+
+    return roc_score, ap_score, conf_mtx
 
 
 # Get spectral embeddings (16-dim)
 emb = spectral_embedding(adj_sparse, n_components=16, random_state=0)
 # Calculate ROC AUC and Average Precision
-sc_roc, sc_ap = get_roc_score(test_edges, test_edges_false, emb)
+roc_sc, ap_sc, conf_mtx_sc = get_roc_score(test_edges, test_edges_false, emb)
 
-print('Spectral Clustering Test ROC score: ', str(sc_roc))
-print('Spectral Clustering Test AP score: ', str(sc_ap))
+
+print('Spectral Clustering Test ROC score: ', str(roc_sc))
+print('Spectral Clustering Test AP score: ', str(ap_sc))
+print('Spectral Clustering Confusion matrix (test): \n', str(conf_mtx_sc))
 
