@@ -7,8 +7,10 @@ import pickle
 import pandas as pd
 import networkx as nx
 
-data_path = './data/facebook'
-save_path_graphs = './graphs/'
+RANDOM_SEED = 42
+np.random.seed(RANDOM_SEED)
+data_path = './data/facebook/'
+save_path_graphs = './data/facebook-processed/'
 USER = 0
 FB_EGO_USERS = [0, 107, 1684, 1912, 3437, 348, 3980, 414, 686, 698]
 
@@ -21,8 +23,8 @@ def load_data(data_path, user_id):
         
     Returns:
         g {networkx graph} -- graph with features"""
-    file_edges = f'{data_path}/{user_id}.edges'
-    file_feats = f'{data_path}/{user_id}.feat'
+    file_edges = f'{data_path}{user_id}.edges'
+    file_feats = f'{data_path}{user_id}.feat'
 
     # load edges
     with open(file_edges) as f:
@@ -131,6 +133,8 @@ def mask_test_edges(adj, test_frac=.2, val_frac=.1):
         idx_j = np.random.randint(0, adj.shape[0])
         if idx_i == idx_j:
             continue
+        if ismember([idx_i, idx_j], edges_all):
+            continue
         if ismember([idx_i, idx_j], train_edges):
             continue
         if ismember([idx_j, idx_i], train_edges):
@@ -151,6 +155,8 @@ def mask_test_edges(adj, test_frac=.2, val_frac=.1):
         idx_i = np.random.randint(0, adj.shape[0])
         idx_j = np.random.randint(0, adj.shape[0])
         if idx_i == idx_j:
+            continue
+        if ismember([idx_i, idx_j], edges_all):
             continue
         if ismember([idx_i, idx_j], train_edges):
             continue
