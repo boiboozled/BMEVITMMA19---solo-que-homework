@@ -1,17 +1,19 @@
 from data_prep import load_user_data
 import networkx as nx
 import numpy as np
-import pickle
+import torch
 from sklearn.metrics import roc_auc_score,average_precision_score,confusion_matrix
+from torch_geometric.utils.convert import to_scipy_sparse_matrix
+from torch_geometric.utils import to_networkx
 
 
 # load data
 user_id = 0
 data_path = './data/facebook-processed/'
-with open(data_path+'0.p', 'rb') as f:
-    g_user = pickle.load(f)
-adj_sparse = nx.to_scipy_sparse_array(g_user)
-g_user_train, train_edges, train_edges_false, val_edges, val_edges_false, test_edges, test_edges_false = load_user_data(user_id, data_path)
+g_user = torch.load(data_path+f'{user_id}_graph.pt')
+adj_sparse = to_scipy_sparse_matrix(g_user.edge_index)
+adj_sparse = adj_sparse.tocsr()
+g_user_train, g_user_val, g_user_test, train_edges, train_edges_false, val_edges, val_edges_false, test_edges, test_edges_false = load_user_data(user_id, data_path)
 
 # print info
 print("Total nodes:", adj_sparse.shape[0])
@@ -44,7 +46,7 @@ WORKERS = 1 # Num. parallel workers
 ITER = 1 # SGD epochs
 
 # Preprocessing, generate walks
-g_n2v = node2vec.Graph(g_user_train, DIRECTED, P, Q) # create node2vec graph instance
+g_n2v = node2vec.Graph(to_networkx(g_user_train), DIRECTED, P, Q) # create node2vec graph instance
 g_n2v.preprocess_transition_probs()
 walks = g_n2v.simulate_walks(NUM_WALKS, WALK_LENGTH)
 #walks = [map(str, walk) for walk in walks]
