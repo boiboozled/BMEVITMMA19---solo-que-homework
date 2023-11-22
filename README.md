@@ -37,4 +37,5 @@ The baseline models are:
 To get the train, validation, and test splits, just run these two scripts in order: 
 - _data_acq.py_,
 - _data_prep.py_.
+
 To run baseline models, simply run the _run_baselines.py_ script.
