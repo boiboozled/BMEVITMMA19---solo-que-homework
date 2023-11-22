@@ -50,13 +50,18 @@ def load_data(data_path, user_id):
 
     # load features
     df = pd.read_table(file_feats, sep=' ', header=None,index_col=0)
-    nx.set_node_attributes(g,df.to_dict('index')) # add features to graph
-    nx.set_node_attributes(g,ego_df.to_dict('index')) # add ego features to graph
+#    nx.set_node_attributes(g,df.to_dict('index')) # add features to graph
+#    nx.set_node_attributes(g,ego_df.to_dict('index')) # add ego features to graph
 
     assert nx.is_connected(g), 'Graph is not connected'
     print(f'Loaded data from {data_path}: {g.number_of_nodes()} nodes, {g.number_of_edges()} edges.')
+
     # create torch_geometric data object
     g_pyg = from_networkx(g)
+    # add features to data object
+    df = pd.concat([ego_df,df])
+    node_feat_array = np.array(df.values, dtype=np.float32)
+    g_pyg.x = torch.tensor(node_feat_array, dtype=torch.float)
 
     #save graph
     torch.save(g_pyg, f'{save_path_graphs}{user_id}_graph.pt')
