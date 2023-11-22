@@ -5,6 +5,10 @@ from sklearn.metrics import roc_auc_score,average_precision_score,confusion_matr
 from torch_geometric.utils.convert import to_scipy_sparse_matrix
 from torch_geometric.utils import to_networkx
 from GNN import GNN, train, test
+import node2vec
+from gensim.models import Word2Vec
+from sklearn.linear_model import LogisticRegression
+from sklearn.manifold import spectral_embedding
 
 
 # load data
@@ -25,10 +29,8 @@ print("Validation edges (negative):", len(val_edges_false))
 print("Test edges (positive):", len(test_edges))
 print("Test edges (negative):", len(test_edges_false))
 
+
 # RUN NODE2VEC
-import node2vec
-from gensim.models import Word2Vec
-from sklearn.linear_model import LogisticRegression
 
 print("\n\n")
 print(40*"-"+" Running node2vec "+40*"-")
@@ -126,8 +128,8 @@ print('node2vec Test ROC score: ', str(test_roc_n2v))
 print('node2vec Test AP score: ', str(test_ap_n2v))
 print('node2vec Confusion matrix (test): \n', str(conf_mtx_n2v))
 
+
 # RUN SPECTRAL CLUSTERING
-from sklearn.manifold import spectral_embedding
 
 print("\n\n")
 print(40*"-"+" Running spectral clustering "+40*"-")
@@ -173,7 +175,9 @@ print('Spectral Clustering Test ROC score: ', str(roc_sc))
 print('Spectral Clustering Test AP score: ', str(ap_sc))
 print('Spectral Clustering Confusion matrix (test): \n', str(conf_mtx_sc))
 
+
 # RUN GNN
+
 print("\n\n")
 print(40*"-"+" Running GNN "+40*"-")
 gnn_model = GNN(g_user_train.num_node_features, 16, 1)
