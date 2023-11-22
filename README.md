@@ -6,7 +6,7 @@ This is the repository of the homework of team solo que for the BMEVITMMA19 cour
 solo que
 
 ## Group members
-Mihályi Balázs Márk - [REDACTED]
+Mihályi Balázs Márk - [J8KAR3]
 
 ## Project describtion
 Friend recommendation with graph neural networks
@@ -24,7 +24,7 @@ This script loads one ego-network, and it's train, validation, and test sets. It
 The baseline models are:
 - Node2Vec (with Logistic Regression)
 - Spectral Clustering
-- GNN (simple GCN) - yet to be added
+- GNN (simple GCN)
 
 ## Related works
 - [Node2Vec](https://arxiv.org/abs/1607.00653)
