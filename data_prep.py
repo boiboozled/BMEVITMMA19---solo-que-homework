@@ -13,6 +13,10 @@ seed_everything(RANDOM_SEED)
 # data paths
 data_path = './data/facebook/'
 save_path_graphs = './data/facebook-processed/'
+# create folder if it doesn't exist 
+import os
+if not os.path.exists(save_path_graphs):
+    os.makedirs(save_path_graphs)
 
 # setting variables
 USER = 0
