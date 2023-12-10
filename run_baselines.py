@@ -1,5 +1,6 @@
 from data_prep import load_user_data
 import numpy as np
+import pandas as pd
 import torch
 from sklearn.metrics import roc_auc_score,average_precision_score,confusion_matrix
 from torch_geometric.utils.convert import to_scipy_sparse_matrix
@@ -9,7 +10,11 @@ import node2vec
 from gensim.models import Word2Vec
 from sklearn.linear_model import LogisticRegression
 from sklearn.manifold import spectral_embedding
+from torch_geometric.seed import seed_everything   
 
+#setting random seed for everything for reproducibility
+RANDOM_SEED = 42
+seed_everything(RANDOM_SEED)
 
 # load data
 user_id = 0
@@ -128,6 +133,11 @@ print('node2vec Test ROC score: ', str(test_roc_n2v))
 print('node2vec Test AP score: ', str(test_ap_n2v))
 print('node2vec Confusion matrix (test): \n', str(conf_mtx_n2v))
 
+# save test scores in csv
+scores = pd.DataFrame({'auc': [test_roc_n2v], 'ap': [test_ap_n2v], 'conf_mtx': [conf_mtx_n2v]})
+scores.to_csv('./scores/node2vec_scores.csv', index=False)
+scores.to_pickle('./scores/node2vec_scores.pkl')
+
 
 # RUN SPECTRAL CLUSTERING
 
@@ -175,21 +185,7 @@ print('Spectral Clustering Test ROC score: ', str(roc_sc))
 print('Spectral Clustering Test AP score: ', str(ap_sc))
 print('Spectral Clustering Confusion matrix (test): \n', str(conf_mtx_sc))
 
-
-# RUN GNN
-
-print("\n\n")
-print(40*"-"+" Running GNN "+40*"-")
-gnn_model = GNN(g_user_train.num_node_features, 16, 1)
-optimizer = torch.optim.Adam(gnn_model.parameters(), lr=0.01)
-criterion = torch.nn.BCEWithLogitsLoss()
-
-for epoch in range(1, 101):
-    loss = train(gnn_model, g_user_train, optimizer, criterion)
-    val_auc, val_ap, _ = test(g_user_val, gnn_model)
-#    print(f'Epoch: {epoch:03d}, Loss: {loss:.4f}, Val AUC: {val_auc:.4f}, Val AP: {val_ap:.4f}')
-
-test_auc, test_ap, conf_mtx_gnn = test(g_user_test, gnn_model)
-print(f'GNN Test AUC: {test_auc:.4f}')
-print(f'GNN Test AP: {test_ap:.4f}')
-print('GNN Confusion matrix (test): \n', str(conf_mtx_gnn))
+# save test scores in csv
+scores = pd.DataFrame({'auc': [roc_sc], 'ap': [ap_sc], 'conf_mtx': [conf_mtx_sc]})
+scores.to_csv('./scores/spectral_clustering_scores.csv', index=False)
+scores.to_pickle('./scores/spectral_clustering_scores.pkl')
