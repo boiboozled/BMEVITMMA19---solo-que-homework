@@ -20,11 +20,29 @@ This script downloads the [facebook dataset](https://snap.stanford.edu/data/ego-
 This script loads the data of all of the ego-networks from the facebook dataset, creates a networkx graph from the data, then creates training, validation, and test splits with negative edge sampling. It then saves the train networkx graph, and the numpy arrays of training, validation and test edges (positive and negative).
 
 ### run_baselines.py
-This script loads one ego-network, and it's train, validation, and test sets. It then runs three baseline approaches, and prints their ROC and AP scores on the console as well as their confusion matrices.
+This script loads one ego-network, and it's train, validation, and test sets. It then runs three baseline approaches, and prints their ROC and AP scores on the console as well as their confusion matrices. It also saves these metrics into pandas dataframes.
 The baseline models are:
 - Node2Vec (with Logistic Regression)
 - Spectral Clustering
 - GNN (simple GCN)
+
+### GNN.py
+This script contains the definition along with training and testing functions for a simple Graph Auto-Encoder (GAE) model. The defined GAE model has two Graph convolutional layers - one for encoding, and one for decoding.
+
+## run_GNN.py
+This scripts does the same things as _run_baselines.py_, but with a GAE model. It trains the model with the specified hyperparameters and prints the ROC AUC and AP scores, along with the confusion matrix. It also saves how the loss and the two scores changed throughout the training phase. It then also saves the three metrics (ROC AUC, AP, confusion matrix) of the model to a pandas dataframe.
+
+## vgae.py
+This sscript contains the definition of the Variational Graph Auto-Encoder (VGAE) class, its encoder's class, along with training and testing functions. It also contains the definition of a function that performs a simple hyperparameter grid search on a VGAE model given lists of parameters to try.
+
+## run_vgae.py
+This scripts does exactly the same things as _run_GNN.py_. The only addition is the hyperparameter grid search, which will occur if the _DO_HYPERPARAMETER_TUNING_ global variable at the beginning of the script is set to True.
+
+## plot_results.py
+This script reads all the dataframes saved during the training of the baseline and GNN methods and plots them. The ROC AUC and AP scores are plotted on bar plots, the confusion matrices are plotted independently.
+
+## Dockerfile
+This Dockerfile contains the definition of a docker image that's needed to run all the major scripts in this project.
 
 ## Related works
 - [Node2Vec](https://arxiv.org/abs/1607.00653)
@@ -39,3 +57,14 @@ To get the train, validation, and test splits, just run these two scripts in ord
 - _data_prep.py_.
 
 To run baseline models, simply run the _run_baselines.py_ script.
+To run the GNN-based methods, run the _run_GNN.py_ and _run_vgae.py_ scripts.
+### Dockerization
+To dockerize the project run the following command in the project folder (or where the Dockerfile is saved):
+```
+docker build -t dl-hw-soloque
+```
+This will build a docker image. To run the modelling sequence as a whole, run this command:
+```
+docker run -d dl-hw-soloque
+```
+The docker container will run the data acquisition and preparation scripts, then the modelling ones, and finally the plotting script.
